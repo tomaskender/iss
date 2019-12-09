@@ -1,0 +1,438 @@
+% ISS PROJECT - 2019
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{vmargin} % for the intelligent margin definition
+\setpapersize{A4}
+\setmarginsrb{10 mm}{10 mm}{10 mm}{10 mm}{0 mm}{0 mm}{0 mm}{0 mm}
+\usepackage[latin2]{inputenc}
+\usepackage{moreverb}
+\usepackage{epsfig}
+\usepackage{hyperref}  % do I have UTF ?
+\usepackage{amsmath}
+% ------- defs -----------------
+\def\bi{\begin{itemize}%\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
+}
+\def\ei{\end{itemize}}
+\def\be{\begin{enumerate}%\setlength{\itemsep}{0pt}\setlength{\parsep}{0pt}
+}
+\def\ee{\end{enumerate}}
+\def\bic{\begin{itemize}\setlength{\itemsep}{-1mm}}
+\newcommand{\D}{\displaystyle}
+\newcommand{\Dfrac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
+\def\ejo{e^{j\omega}}
+\def\mejo{e^{-j\omega}}
+\def\zm1{z^{-1}}
+\newcommand{\RA}{$\Rightarrow$} 
+\pagestyle{empty}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\noindent
+\vspace{5mm}
+\begin{center}{\Large\bf ISS Projekt 2019 / 20  }\\
+  Honza Èernocký, ÚPGM FIT VUT\\
+\today
+\end{center}
+
+\section{Úvod }
+Cílem projektu je udìlat jednoduchý systém pro vyhledávání v audiu
+pomocí akustického vzoru, Query by Example (QbE). Na zaèátku projektu
+nahrajete 10 vìt podle známé americké øeèové databáze
+TIMIT\footnote{\url{https://catalog.ldc.upenn.edu/LDC93S1}}. Pak si
+nahrajete dvì klíèová slova a ta budete v nahraných 10ti vìtách hledat. 
+
+Soubor vìt pro nahrání je pro ka¾dého individuální a je v: \\
+\url{https://www.fit.vutbr.cz/study/courses/ISS/private/proj2019-20/prompts/xlogin00.txt},
+kde {\tt xlogin00} je Vá¹ login. 
+
+Projekt je mo¾no
+øe¹it v Pythonu, Matlabu, Octave, jazyce C nebo v libovolném jiném programovacím nebo
+skriptovacím jazyce. Je mo¾né pou¾ít libovolné knihovny. 
+Projekt se nezamìøuje na ``krásu programování'',
+není tedy nutné mít v¹e úhlednì zabalené do okomentovaných funkcí,
+o¹etøené v¹echny chybové stavy, atd. Dùle¾itý je výsledek. 
+%-- napø. soubor v Matlabu, ze kterého copy-pastujete  pøíkazy do
+%pøíkazové øádky, naprosto staèí. 
+Kód {\bf  musí být mo¾né spustit  na ¹kolním Linuxu nebo Windows  a musí
+prokazatelnì produkovat výsledky obsa¾ené ve Va¹em protokolu. }
+
+\section{Odevzdání projektu} 
+bude probíhat do informaèního systému WIS ve  dvou  souborech: 
+\be
+\item \verb#xlogin00.pdf# (kde ``xlogin00'' je Vá¹ login) je protokol
+  s  øe¹ením. 
+\bi 
+\item V  záhlaví   prosím uveïte své jméno, pøíjmení a login. 
+\item Pak budou  následovat odpovìdi na jednotlivé otázky --- 
+  obrázky, numerické hodnoty,  komentáøe. 
+\item U ka¾dé otázky uveïte struèný postup - mù¾e se jednat o kousek
+  okomentovaného kódu, komentovanou rovnici nebo text. Není nutné
+  kopírovat do protokolu celý zdrojový kód.   Není nutné opisovat zadání
+  èi teorii, soustøeïte se pøímo na øe¹ení. 
+\item Pokud  vyu¾ijete zdroje
+ mimo standardních materiálù (pøedná¹ky, cvièení a  studijní etapa
+ projektu ISS), prosím uveïte, odkud jste èerpali. 
+\item Protokol je mo¾né psát v libovolném
+ systému (Latex, MS-Word, Libre Office, \ldots), mù¾ete jej psát i
+ èitelnì rukou, dolepit do nìj obrázky a pak oskenovat. Protokol mù¾e
+ být èesky, slovensky  nebo anglicky. 
+\item Doporuèená
+ délka protokolu jsou   2 strany + obrázky, pøípadnì 3, pokud se rozhodnete
+ øe¹it bonusový úkol. 
+\ei 
+\item {\tt xlogin.tar.gz} je komprimovaný archiv  obsahující následující adresáøe: 
+\bi 
+\item {\tt /src} - Va¹e zdrojové kódy -- mù¾e se jednat o jeden
+  soubor (napø. \verb#moje_reseni.m#), o více souborù èi skriptù nebo o
+  celou adresáøovou strukturu. 
+\item {\tt /sentences} - nahrané vìty se správnými názvy souborù, ve
+  formátu WAV, na vzorkovací frekvenci 16~kHz, bitová ¹íøka 16~bitù,
+  bez komprese. V protokolu  Vás prosíme o informaci, k èemu mù¾eme
+  data pou¾ít, viz ní¾e. 
+\item {\tt /queries} - soubory {\tt q1.wav} a {\tt q2.wav} s~hledanými klíèovými slovy, ve stejném formátu jako vý¹e, zbavené
+  ticha. 
+\item {\tt /hits} - soubory s nalezenými
+  nejpravdìpodobnìj¹ími výskyty klíèových slov, ve stejném formátu
+  jako vý¹e, ``vykousnuté'' z pøíslu¹né vìty. 
+\ei
+\item  Projekt je {\bf samostatná
+  práce}, proto budou Va¹e zdrojové kódy  køí¾ovì korelovány a v
+  pøípadì silné podobnosti budou vyvozeny pøíslu¹né závìry. 
+\item Silná korelace s kódy ze studijní etapy projektu je v poøádku, nemusíte
+  tedy mìnit názvy promìnných, pøipisovat zbyteèné komentáøe, atd. 
+\ee 
+
+% ---------------------- signals 
+\section{Zadání }
+\be 
+\item {\bf [1 bod]} Namluvte vìty podle Va¹eho  osobního souboru,
+  na øádku je v¾dy jméno souboru a to, co máte øíci, napø.: 
+\begin{verbatim}
+sa1.wav: She had your dark suit in greasy wash water all year.
+sa2.wav: Don't ask me to carry an oily rag like that.
+si1972.wav: Perfect, he thought.
+... 
+\end{verbatim}
+Nahrávat mù¾ete na èemkoliv, staèí bì¾ný smartphone nebo notebook,
+není nutné hledat studiový mikrofon a HiFi zvukovou
+kartu. Doporuèujeme smartphony, mívají lep¹í mikrofon ne¾
+notebooky. Volte bì¾né klidné prostøedí (byt, kanceláø),  není
+nutné shánìt  odhluènìnou  místnost. Hovoøte svou bì¾nou
+angliètinou, není nutné sna¾it se o anglický  nebo americký  akcent. Po¾adovaný
+formát pro data je: 
+\bi  
+\item standardní WAV bez komprese, 
+\item vzorkovací frekvence $F_s =$16kHz, 
+\item mono (1 kanál), 
+\item 16 bitù na 1 vzorek. 
+\ei 
+Pokud Vá¹ nahrávací
+software takový formát nepodporuje, mù¾ete nahrávat na vy¹¹í
+vzorkovací frekvenci a pak pøevést, napø. pomocí bì¾ného programu
+{\tt ffmpeg}, pro bì¾né audio-nahrávky z Androidu napø. takto: \\
+\verb#ffmpeg -i Sa1.m4a  -ar 16000 -ac 1 -acodec pcm_s16le sa1.wav#
+
+
+Poèáteèní písmena názvù souborù nech» jsou prosím malými
+písmeny. Výsledné nahrávky zkontrolujte poslechem, a pokud v nìkteré 
+objevíte vá¾ný problém (pøeøek, bouchnutí, atd.), prostì ji opakujte. 
+
+Do protokolu uveïte tabulku s názvy souborù a délkou vìt ve vzorcích a
+v sekundách. Délku získáte napø. pomocí programu {\tt soxi} takto:
+\verb#soxi sa1.wav#
+
+Takto nahraná øeèová data jsou cenným materiálem, do protokolu prosím
+uveïte, jak je mù¾eme pou¾ít (preferujeme samozøejmì (b) nebo (c), ale
+nemù¾eme Vás nutit a body za to nejsou\ldots)  
+\be
+\item pouze pro vyhodnocení tohoto ISS projektu. 
+\item pro (a) a  pro výzkum a vývoj v rámci øeèové
+  skupiny na FITu BUT Speech@FIT. 
+\item pro (a), (b) a pro tvorbu volnì dostupné databáze ``Czenglish
+  TIMIT''. Ta nebude v  ¾ádném pøípadì obsahovat ¾ádná Va¹e osobní
+  data (jméno, pøíjmení ani login). 
+\ee 
+
+{\bf Kontrola:}  v adresáøi {\tt /sentences} je 10 WAV souborù se
+správnými jmény, $F_s$, bitovou ¹íøkou, které obsahují to, co
+mají. Protokol obsahuje tabulku a informaci o pou¾ití dat. 
+% ----------------- queries 
+~\\\hrule 
+
+\item {\bf [1 bod]} Z textu k nahrávání vyberte dvì klíèová slova, která budou
+  hrát roli ``queries''. Je dobré, aby mìla alespoò 3 slabiky, èím
+  del¹í slovo, tím lépe se detekuje. Tato slova nahrejte a ulo¾te ve
+  stejném formátu, jako je popsáno vý¹e, do {\tt q1.wav} a {\tt
+    q2.wav}. Pøed ulo¾ením {\bf zbavte slova okolního ticha} -- s
+  tichem by se Vám velmi ¹patnì detekovala. To mù¾ete provést v
+  prostøedí, kde pracujete (Octave, Python, \ldots), ale mù¾ete 
+  klidnì pou¾ít libovolný software pro editaci audia -- Audacity,
+  GoldWave, WaveSurfer\footnote{Mùj oblíbený,  není nutné
+    instalovat a rozjede se prakticky v¹ude
+    \url{https://sourceforge.net/projects/wavesurfer/}} nebo jiný.   Opìt
+  zkontrolujte poslechem. 
+
+Do protokolu uveïte tabulku s vybranými slovy pro {\tt q1.wav} a {\tt
+    q2.wav} a s jejich  délkou  ve vzorcích a
+v sekundách. 
+
+{\bf Kontrola:}  v adresáøi {\tt /queries} jsou {\tt q1.wav} a {\tt
+    q2.wav}  se správnými jmény, $F_s$ a bitovou ¹íøkou. V protokolu
+je tabulka. Pokud jsou queries del¹í ne¾ vìty, nìco je 
+¹patnì\ldots 
+
+% --------- specgram 
+~\\\hrule
+\item {\bf [1 bod]} Nauète se produkovat a zobrazovat
+  spektrogram. Jedná se o 2D obrázek, kde vodorovnì je èas, svisle
+  frekvence a barva znaèí hodnotu spektra na dané frekvenci v daném
+  èase, viz pøíklad. 
+
+%\centerline{\huge{\tt si712}}%\vspace{-2mm}
+\centerline{\includegraphics[width=\linewidth,height=0.4\linewidth]{spec.png}}
+
+  Technicky výpoèet probíhá následovnì
+\be
+\item pøed dal¹ím zpracováním je dobré signál ustøednit pomocí
+  odeètení støední hodnoty. Pokud v nìm byla (¹kodlivá) stejnosmìrná
+  slo¾ka, spolehlivì ji tak znièíte. V Matlab/Octave:
+  \verb#s = s - mean(s)#
+\item signál rozdìlíme na segmenty
+  (rámce) o délce 25 ms s pøekrytím 15 ms, tak¾e posun mezi
+  jednotlivými rámci je 10~ms. Dostaneme jich tedy 100 za sekundu. 
+\item vybereme jeden rámec pomocí okénkové funkce, nejèastìji se
+  pou¾ívá tzv. Hammingovo okno, které utlumí signál na okrajích. 
+\item vybraný rámec se doplní nulami tak, aby se pak dobøe poèítala
+  rychlá Fourierova transformace, tedy na mocninu dvou. Takto doplnìný
+  rámec oznaème $x[n]$ a jeho délku $N$. 
+\item vypoète se rychlá Fourierova transformace, která dá $N$
+  komplexních   koeficientù $X[k]$. Ty omezíme jen na $\frac{N}{2}$,
+  proto¾e nemá cenu nic dìlat nad polovinou vzorkovací frekvence. 
+\item z výsledku se vypoète logaritmické výkonové
+  spektrum\footnote{Prosím opravdu nezapomeòte na absolutní hodnotu, u
+  komplexních èísel $c^2$ {\bf není toté¾} co $|c|^2$ ~!} 
+$$P[k] = 10 \log_{10} |X[k]|^2$$
+\item výsledek se ulo¾í jako sloupec do matice se spektrogramem a
+  vhodnì (èernobíle nebo barevnì) zobrazí. 
+\ee 
+
+Lze pou¾ít funkce dostupné v rùzných knihovnách, napø. mùj kód
+(Octave)  vypadá takto: 
+
+\begin{verbatim}
+Fs = 16000; N = 512; wlen = 25e-3 * Fs; wshift = 10e-3*Fs; woverlap = wlen - wshift; 
+win = hamming(wlen); %plot(win); 
+f = (0:(N/2-1)) / N * Fs;
+t = (0:(1 + floor((length(x) - wlen) / wshift) - 1))* wshift/Fs;  % minus one as of Matlab ...   
+X = specgram (x, N, Fs, win, woverlap);   
+imagesc(t,f,10*log(abs(X).^2)); 
+set (gca (), "ydir", "normal"); xlabel ("Time"); ylabel ("Frequency"); colormap(jet); 
+\end{verbatim}
+
+Klidnì jej pou¾ijte nebo pou¾ijte kód v Pythonu od Katky ®molíkové\footnote{\url{http://www.stud.fit.vutbr.cz/~izmolikova/ISS/project/}},
+ale mìli byste pøesnì vìdìt, co spektrogram obsahuje. 
+
+Do protokolu vlo¾te spektrogram libovolné vìty, titulek obrázku a» je
+název vìty. Osy nech» jsou skuteènì
+v sekundách a Hertzích. 
+
+{\bf Kontrola:}  v protokolu je obrázek spektrogramu s pìknými
+osami a názvem. Máte nachystanou funkci/kód pro výpoèet spektrogramu. 
+
+% --------- features 
+~\\\hrule
+\item {\bf [1 bod]} Napi¹te funkci pro výpoèet parametrù (features). Tìmi bude
+  nutné popsat query a prohledávanou vìtu. Pro ka¾dý rámec je nutné
+  vyprodukovat jeden vektor parametrù. Parametry mù¾ete vymyslet
+  jaké chcete, my doporuèujeme výstupy lineární banky filtrù, která
+  produkuje pro ka¾dý rámec $N_c = 16$ koeficientù\footnote{Proè tak
+    málo a ne pùvodních 256 ? Plné spektrum popisuje øeè hodnì
+    detailnì, tak¾e by nemuselo (ani pro stejné hlásky) dojít ke shodì,
+  men¹í poèet parametrù je ``bezpeènìj¹í''. } jednodu¹e tak, ¾e
+  posèítá $B = \frac{256}{N_c}$ koeficientù logaritmického  výkonového
+  spektra: 
+$$f_0 = \sum_{k = 0}^{B-1}P[k], ~~~~~~~ f_1 = \sum_{k = B}^{2B-1}P[k],~~~
+  \ldots ~~~f_{B-1} = \sum_{k = 256-B}^{256-1}P[k]$$
+
+  Výsledné features je potøeba ulo¾it do matice, jeden sloupec pro
+  ka¾dý rámec. 
+
+  Výpoèet se dá  popsat pìknì maticovì, je-li matice se
+  spektrogramem ${\bf P}$ a chceme-li matici parametrù ${\bf F}$, jde
+  výpoèet realizovat maticovým násobením: 
+$${\bf F} =    {\bf A} {\bf P}. $$
+  Vymyslete, jak naplnit matici ${\bf A}$. 
+
+  Do protokolu popi¹te Vámi zvolený výpoèet parametrù, v pøípadì, ¾e
+  pou¾ijete popsanou lineární  banku filtrù, popi¹te, jak naplnit
+  matici ${\bf A}$. 
+
+{\bf Kontrola:}  v protokolu je popis výpoètu parametrù, pøípadnì
+tvorba matice ${\bf A}$. Máte nachystanou funkci/kód pro výpoèet
+parametrù. 
+
+% ----------- scores 
+~\\\hrule
+\item {\bf [1 bod]} Napi¹te funkci pro výpoèet skóre klíèového slova (query)
+  pro jednu vìtu. Její hodnota by mìla udávat pravdìpodobnost zaèátku
+  nebo konce klíèového slova v závislosti na èase. Výpoèet skóre  mù¾ete vymyslet
+  jaký  chcete, my doporuèujeme nechat matici parametrù query ${\bf
+    Q}$ ``projí¾dìt'' kolem  matice paramterù vìty ${\bf     F}$ a pro
+  ka¾dou poteciální polohu query  $pp$  poèítat jednu hodnotu skóre. Jako
+  vzdálenost docela funguje souèet Pearsonových korelaèních
+  koeficientù mezi jednotlivými vektory: 
+$$d_{pp} = d({\bf Q}, {\bf F}_{(pp:pp+N_q-1)}) = 
+   \sum_{k = 0}^{N_q - 1} p({\bf q}_k, {\bf f}_{pp+k}),$$
+kde $N_q$ je poèet vektorù v query (resp. její délka v setinách
+sekundy), $N_c$ je poèet koeficientù,   ${\bf q}_k$ a ${\bf f}_k $ jsou sloupce matice parametrù
+query  a vìty a  notace ${\bf F}_{(i:j)}$ znamená ``sloupce $i$ a¾ $j$
+z matice ${\bf F}$''. Pearsonùv korelaèní koeficient je definován jako 
+$$p({\bf a}, {\bf b}) 
+  = \frac{\sum_{i=0}^{N_c-1}(a_i - \bar{a})(b_i - \bar{b})}%
+   {\sqrt{\sum_{i=0}^{N_c-1}(a_i - \bar{a})^2}\sqrt{\sum_{i=0}^{N_c-1}(b_i -
+       \bar{b})^2}}.$$
+$\bar{a}$ je prùmìr v¹ech prvkù vektoru ${\bf a}$, podobnì pro ${\bf
+     b}$. Matematicky hloubaví doká¾í jistì vzorec interpretovat jako
+   ``skalární souèin ustøednìného vektoru ${\bf a}$ s ustøednìným
+   vektorem ${\bf b}$ lomeno geometrickým prùmìrem norem ustøednìného
+   vektoru ${\bf a}$ a ustøednìného vektoru ${\bf b}$ ;) 
+
+  Potenciální poloha query $pp$ mù¾e postupovat po jednom vektoru, ale
+  je mo¾né, ¾e výpoèet by pak byl hodnì pomalý, zkou¹eli jsme (docela
+  úspì¹nì) zvy¹ování $pp$ po 5 rámcích (tedy po 0.05~s). 
+
+  Do protokolu popi¹te Vámi zvolený výpoèet skóre. Mù¾ete napøíklad
+  vlo¾it komentovaný kód. 
+
+{\bf Kontrola:}  v protokolu je popis výpoètu skóre. Máte nachystanou
+funkci/kód pro výpoèet prùbìhu skóre query v zadané vìtì. 
+
+% -------------- graphs 
+~\\\hrule
+\item {\bf [3 body]} Toto je hlavní grafický výstup
+  projektu. Pøilo¾te deset obrázkù, ka¾dý bude mít v titulku název
+  vìty a bude sestávat ze tøí èástí,  viz pøíklad:
+  \bi 
+  \item signál, 
+  \item matice parametrù vìty, 
+  \item prùbìh skóre klíèových slov {\tt q1.wav } a {\tt q2.wav} v
+    prùbìhu vìty. Oznaète, který prùbìh je pro které slovo. 
+  \ei 
+
+\pagebreak 
+%\centerline{\huge{\tt si712}}%\vspace{-2mm}
+\centerline{\includegraphics[width=\linewidth,height=0.5\linewidth]{out.png}}
+
+{\bf Èasové osy nech» jsou pro v¹echny obrázky v sekundách}. To Vás mù¾e
+trochu potrápit, proto¾e u signálu, parametrù a skóre má èasová osa
+jiný  krok (u signálu jeden vzorek, u parametrù jeden rámec a u skóre
+jeden nebo nìkolik rámcù). Hodnot skóre navíc mù¾e být ménì ne¾ rámcù
+vìty, obvykle to asi bude $N_v - N_q$, proto¾e query ``nevysunujeme'' mimo
+vìtu. Sna¾te se, aby èasové osy navzájem ``sedìly'', viz pøíklad. 
+
+{\bf Kontrola:}  v protokolu je 10 obrázkù se názvy, signály, parametry a
+prùbìhy skóre, je oznaèené, co je co, v¹echny mají pìknou èasovou osu. 
+
+% ------------------ thresholds 
+~\\\hrule
+\item {\bf [1 bod]} Popi¹te, jak budete z prùbìhu skóre urèovat, zda
+  query na daném místì je nebo není. Zøejmì bude nutné pou¾ít  nìjaký
+  rozhodovací práh, popi¹te, jak ho urèíte. Nemusí se jednat o velkou
+  vìdu, staèí analyzovat to, co vidíte. Napi¹te jeho hodnotu(y) pro {\tt
+    q1.wav} a {\tt q2.wav}. 
+
+{\bf Kontrola:}  v protokolu je popis urèení prahu(ù) a jejich hodnoty
+pro obì dvì queries. 
+
+% ---------------- results 
+~\\\hrule
+\item {\bf [2 body]} Uveïte výsledky - tabulku s jednotlivými vìtami a
+  klíèovými slovy, pro ka¾dou kombinaci výskyt ano/ne a pokud ano, od
+  kterého do kterého vzorku se tam query nachází. Nálezy ``hits''
+  extrahujte do krátkých WAV souborù a ulo¾te do adresáøe {\tt /hits}
+  s nìjakými inteligentními jmény, napø. \verb#q1_sa1.wav#, \verb#q2_si1972.wav#. Poslechnìte si, zda jste se ``trefil/a''. 
+
+{\bf Kontrola:} v protokolu je tabulka s nálezy a  v adresáøi {\tt /hits} jsou WAV soubory s nálezy
+queries. 
+
+% ---------------- zaver  
+~\\\hrule
+\item {\bf [1 bod]} Závìr: zpracování øeèi není
+  jednoduché a je mo¾né, ¾e Va¹e výsledky nebudou ``nic moc'' ani kdy¾
+  budete mít v¹e dobøe naprogramované. Krátce zhodno»te zda Vá¹ detektor
+  funguje nebo ne, kde funguje, kde selhává a jak by se dal zlep¹it. 
+
+{\bf Kontrola:}  v protokolu je závìr, pøeèetli jste si ho po sobì. 
+\ee
+
+% ============================ 
+
+\section{Bonusový úkol}
+{\bf je  nepovinný, není hodnocen body, ale
+  nejzajímavìj¹í øe¹ení   vyhraje láhev dobrého francouzského
+  èerveného vína. } \vspace{2mm}
+
+Je zøejmé, ¾e nejvìt¹ím problémem navrhovaného postupu je {\bf
+  rozdílné èasování} - v query staèí øíci jednu samohlásku o trochu
+  del¹í, èasování se rozjede, vektory, které by mìly být stejné,
+  nepadnou na sebe a hodnota skóre jde do háje. {\bf Zkuste s èasováním
+  nìco udìlat, aby se výsledky zlep¹ily}. Zde je nìkolik návrhù, ale
+  mù¾ete pøijít s èímkoliv dal¹ím ! 
+\be 
+\item Pro ka¾dou query vyslovte nìkolik verzí --- normálnì,  pomalu, rychle, s
+  rùznými délkami samohlásek. 
+\item Nahrajte query jen jednou, ale pou¾ijte umìlé roztáhnutí nebo
+  smrsknutí - to mù¾ete naimplementovat sami na úrovni matice
+  parametrù ${\bf Q}$ nebo pomocí software  pro úpravu audia. Napø. populární efekt
+  {\tt atempo=...} v~{\tt ffmpeg} nebo podobný efekt v  {\tt sox}. 
+\item pou¾ijte pro èasové zarovnání matice parametrù query a vybrané
+  matice parametrù z vìty dynamické borcení èasu - Dynamic Time
+  Warping, DTW\footnote{viz
+    studijní opora  kursu ZRE
+    \url{https://www.fit.vutbr.cz/study/courses/ZRE/public/opora/zre_opora.pdf} 
+  a laboratorní úloha
+  \url{https://www.fit.vutbr.cz/study/courses/ZRE/public/labs/05_dtw_hmm/} 
+  (jen èást DTW). }
+\item Pro dal¹í nápady ohlednì QbE se mù¾ete podívat do èlánku
+  ``Comparison of methods for language-dependent and
+  language-independent query-by-example spoken term detection'' Javiho
+  Tejedora a Igora Sz\"{o}keho%
+\footnote{\url{https://www.fit.vut.cz/research/publication/10179/}},  pøípadnì zajít  za mnou,  za Igorem nebo za kterýmkoliv dal¹ím
+  èlenem skupiny BUT Speech@FIT. 
+\ee 
+
+Dal¹í zlep¹ení se netýká  èasování, ale normalizace
+  parametrù: zkuste prùbìhy výstupù  ka¾dého filtru {\bf v
+    èase}\footnote{Ne pøes v¹echny koeficienty filtru ! To u¾ dìlá
+    Pearsonùv koeficient.}
+  normalizovat tak, aby mìly nulovou støední hodnotu a jednotkovou
+  varianci. Øíkáme tomu MVN (Mean and Variance Normalization). Pro
+  query to asi udìláte jen jednou. U prohledávané vìty je mo¾né
+  normalizovat jednou celou vìtu nebo normalizaci provést pro ka¾dou
+  srovnávanou pod-matici ${\bf F}_{(pp:pp+N_q-1)}$. Pøi výpoètu
+  parametrù pro normalizaci je dobré dát pozor na velká mno¾ství
+  ticha, které mù¾e støední hodnoty i variance slu¹nì
+  zkreslit --- je dobré  udìlat si jednoduchý detektor ticha
+  (zalo¾ený na energii rámce nebo na souètu hodnot spektrogramu pro
+  jeden rámec) a ticho vylouèit z odhadu støední hodnoty a variance. 
+
+\vspace{2mm}
+
+Pokud se rodhodnete pro øe¹ení bonusového úkolu, v protokolu své øe¹ení krátce
+popi¹te a uveïte jeden (ne deset) obrázek, kde srovnáte skóre
+základního detektoru a Va¹í vylep¹ené verze (Va¹ich vylep¹ených
+verzí). 
+
+\vspace{2mm}
+
+Na závìr bonusového úkolu mù¾ete zkusit vyhledávat ne své klíèové
+slovo, ale query vypreparovanou {\bf ze~skuteèné databáze TIMIT} v
+souboru\\
+ \url{https://www.fit.vutbr.cz/study/courses/ISS/private/proj2019-20/bonus_timit_query/xlogin00.wav} 
+
+Jednoduchý postup popsaný v zadání  na kombinaci ``query ze skuteèného TIMITu'' vs. ``vìta z
+Czechglish TIMITu'' kvùli rozdílùm v øeèníkovi, akcentu, nahrávacím
+zaøízení a prostøedí totálnì selhává. Uvidíme, jak si poradí Va¹e
+vylep¹ená verze ! 
+ 
+\end{document}
