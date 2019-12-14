@@ -7,10 +7,10 @@ import soundfile as sf
 import IPython
 import math
 
-matica = []
+obj = []
 
-def calculate_features(filename):
-    global matica
+def calculate_features(filename, invert_axis):
+    global obj
 
     s, fs = sf.read(filename)
     t = np.arange(s.size) / fs
@@ -30,14 +30,15 @@ def calculate_features(filename):
     obj = np.array(matica)
 
     plt.figure(figsize=(9,3))
-    plt.pcolormesh(range(obj[0].size), range(int(obj.size/obj[0].size)), obj)
-    plt.gca().set_title('sa1.wav')
+    plt.pcolormesh(t, range(int(obj.size/obj[0].size)), obj)
+    plt.gca().set_title(filename)
     plt.gca().set_xlabel('Čas [s]')
-    plt.gca().set_ylabel('Frekvence [Hz]')
+    plt.gca().set_ylabel('Frekvencia [Hz]')
     cbar = plt.colorbar()
-    cbar.set_label('Spektralní hustota výkonu [dB]', rotation=270, labelpad=15)
+    cbar.set_label('Spektrálna hustota výkonu [dB]', rotation=270, labelpad=15)
 
-    plt.gca().invert_yaxis()
+    if invert_axis:
+        plt.gca().invert_yaxis()
     plt.tight_layout()
     return plt
 
@@ -46,11 +47,8 @@ def calculate_score(sentence_matica, sentence_pp, query_matica):
     query_matica = np.array(query_matica)
     curr_score = 0
     for k in range(len(query_matica[0])):
-        val = pearsonr(sentence_matica.transpose()[sentence_pp+k], query_matica.transpose()[k])[1]
-        if math.isnan(val):
-            val = 0
-        curr_score += val 
-    return curr_score/len(query_matica[0])
+        curr_score += pearsonr(query_matica.transpose()[k], sentence_matica.transpose()[sentence_pp+k])[0]
+    return curr_score/np.size(query_matica,0)
 
 
 def create_similarity_graph(sentence_matica, query_matica):
@@ -58,19 +56,18 @@ def create_similarity_graph(sentence_matica, query_matica):
     for pp in range(len(sentence_matica[0])-len(query_matica[0])):
         score_mat.append(calculate_score(sentence_matica, pp, query_matica))
     plt.figure(figsize=(9,3))
-    print(score_mat)
-    #plt.plot(np.linspace(0, len(sentence_matica[0])), np.array(score_mat))
-    plt.gca().set_title('Priebeh skore.wav')
+    plt.plot(np.arange(len(score_mat))/100, score_mat)
+    plt.gca().set_title('Priebeh skóre')
     plt.gca().set_xlabel('Čas [s]')
-    plt.gca().set_ylabel('Skore')
+    plt.gca().set_ylabel('Skóre')
 
     plt.tight_layout()
     plt.savefig("skore.pdf")
     
 
-calculate_features('./sentences/si512.wav')#.savefig('output.pdf')
-sent_m = matica
-calculate_features('./queries/q1.wav')
-query_m = matica
+calculate_features('./sentences/sa1.wav', False).savefig('sa1.pdf')
+sent_m = obj
+calculate_features('./queries/q1.wav', True).savefig('q1.pdf')
+query_m = obj
 
 create_similarity_graph(sent_m, query_m)
