@@ -45,10 +45,10 @@ def calculate_features(filename, invert_axis):
 def calculate_score(sentence_matica, sentence_pp, query_matica):
     sentence_matica = np.array(sentence_matica)
     query_matica = np.array(query_matica)
-    curr_score = 0
-    for k in range(len(query_matica[0])):
+    curr_score = 0.0
+    for k in range(len(query_matica.transpose())):
         curr_score += pearsonr(query_matica.transpose()[k], sentence_matica.transpose()[sentence_pp+k])[0]
-    return curr_score/np.size(query_matica,0)
+    return curr_score/len(query_matica[0])
 
 
 def create_similarity_graph(sentence_matica, query_matica):
@@ -56,6 +56,7 @@ def create_similarity_graph(sentence_matica, query_matica):
     for pp in range(len(sentence_matica[0])-len(query_matica[0])):
         score_mat.append(calculate_score(sentence_matica, pp, query_matica))
     plt.figure(figsize=(9,3))
+    plt.ylim(0,1)
     plt.plot(np.arange(len(score_mat))/100, score_mat)
     plt.gca().set_title('Priebeh skóre')
     plt.gca().set_xlabel('Čas [s]')
@@ -65,7 +66,7 @@ def create_similarity_graph(sentence_matica, query_matica):
     plt.savefig("skore.pdf")
     
 
-calculate_features('./sentences/sa1.wav', False).savefig('sa1.pdf')
+calculate_features('./sentences/si512.wav', False).savefig('si512.pdf')
 sent_m = obj
 calculate_features('./queries/q1.wav', True).savefig('q1.pdf')
 query_m = obj
