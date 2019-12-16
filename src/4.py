@@ -59,7 +59,10 @@ def calculate_score(sentence_matica, sentence_pp, query_matica):
     query_matica = np.array(query_matica)
     curr_score = 0.0
     for k in range(len(query_matica.transpose())):
-        curr_score += pearsonr(query_matica.transpose()[k], sentence_matica.transpose()[sentence_pp+k])[0]
+        val = pearsonr(query_matica.transpose()[k], sentence_matica.transpose()[sentence_pp+k])[0]
+        if math.isnan(val):
+            val = 0
+        curr_score += val 
     return curr_score/len(query_matica[0])
 
 
@@ -74,15 +77,22 @@ def create_similarity_graph(filename):
     sentence_matica = obj
     
     calculate_features('q1.wav', True)
+    q1_obj = obj
     q1_score = calculate_score_mat(sentence_matica, obj)
     calculate_features('q2.wav', True)
+    q2_obj = obj
     q2_score = calculate_score_mat(sentence_matica, obj)
 
     plt.figure(figsize=(9,3))
     plt.ylim(0,1)
     plt.margins(x=0)
-    plt.plot(np.arange(len(q1_score))/100, q1_score, label='effective')
-    plt.plot(np.arange(len(q2_score))/100, q2_score, label='appreciated')
+
+    nans = np.zeros(len(sentence_matica[0])-len(q1_score), dtype=float)
+    plt.plot(np.arange(len(sentence_matica[0]))/100, list(q1_score) + list(nans), label='effective')
+
+    nans = np.zeros(len(sentence_matica[0])-len(q2_score), dtype=float)
+    plt.plot(np.arange(len(sentence_matica[0]))/100, list(q2_score) + list(nans), label='appreciated')
+
     plt.legend(loc='upper right')
     #plt.gca().set_title('effective and appreciated vs ' + filename)
     plt.gca().set_xlabel('t')
