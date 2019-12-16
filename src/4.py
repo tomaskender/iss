@@ -30,11 +30,11 @@ def calculate_features(filename, is_query):
     plt.margins(x=0)
     plt.savefig('signal_' + filename + '.pdf')
 
-    f, t, sgr = spectrogram(s, fs,nperseg=400, noverlap=240, nfft= 511)
+    f, t, sgr = spectrogram(s, fs,nperseg=400, noverlap=240, nfft= 512)
     sfgr_log = 10 * np.log10(sgr+1e-20) 
 
     matica = []
-    for j in range(0, len(sfgr_log), 16):
+    for j in range(0, len(sfgr_log)-1, 16):
         riadok = []
         for i in range(len(sfgr_log[j])):
             sum = 0
