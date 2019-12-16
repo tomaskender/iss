@@ -25,7 +25,7 @@ def calculate_features(filename, is_query):
 
     plt.figure(figsize=(9,3))
     plt.plot(t, s)
-    #plt.gca().set_title('Audio signal of ' + filename)
+    plt.gca().set_title(filename)
     plt.gca().set_xlabel('t')
     plt.margins(x=0)
     plt.savefig('signal_' + filename + '.pdf')
